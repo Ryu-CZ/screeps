@@ -18,7 +18,9 @@ module.exports = {
   }, // end run function
   burry : function(name, spawn) {
     // mark resource as free to mine
-    spawn.room.memory.containers[Memory.creeps[name].containerId].isFree = true;
+    if (spawn.room.memory.containers[Memory.creeps[name].containerId]) {
+      spawn.room.memory.containers[Memory.creeps[name].containerId].isFree = true;
+    }
     //clean memory left over
     delete Memory.creeps[name];
   }
