@@ -30,27 +30,32 @@ module.exports = {
       }
       else {
         wall = Game.getObjectById(creep.memory.toRepair)
-        if (wall.hits >= wall.hitsMax) {
-          walls = creep.pos.find(
-            FIND_STRUCTURES,
-            {
-              filter: (s) => (s.structureType == STRUCTURE_WALL ||
-                s.structureType == STRUCTURE_RAMPART) &&
-                s.hits < s.hitsMax
-            });
-          if (walls == undefined) {
-            wall = undefined
-            creep.memory.toRepair = undefined
-          }
-          else {
-            wall = _.min(walls, (w) => w.hits)
-            wall = creep.pos.findClosestByRange(
+        if (wall == undefined;) {
+          creep.memory.toRepair = undefined;
+        }
+        else {
+          if (wall.hits >= wall.hitsMax) {
+            walls = creep.pos.find(
               FIND_STRUCTURES,
               {
                 filter: (s) => (s.structureType == STRUCTURE_WALL ||
                   s.structureType == STRUCTURE_RAMPART) &&
-                  s.hits <= wall.hits
+                  s.hits < s.hitsMax
               });
+            if (walls == undefined) {
+              wall = undefined
+              creep.memory.toRepair = undefined
+            }
+            else {
+              wall = _.min(walls, (w) => w.hits)
+              wall = creep.pos.findClosestByRange(
+                FIND_STRUCTURES,
+                {
+                  filter: (s) => (s.structureType == STRUCTURE_WALL ||
+                    s.structureType == STRUCTURE_RAMPART) &&
+                    s.hits <= wall.hits
+                });
+            }
           }
         }
       }
