@@ -45,7 +45,7 @@ module.exports = {
     }
   }, // end run function
   // clean remains of creep
-  burry : function(name, spawn) {
+  burry : function(name) {
     //clean memory left over
     delete Memory.creeps[name];
   }

@@ -166,7 +166,7 @@ module.exports = function() {
       if (Game.creeps[c] == undefined) {
         console.log(this.name + " - Desolving creep: " + c + "(" + Memory.creeps[c].role + ")");
         if (Memory.creeps[c].role == 'miner') {
-          roleMiner.burry(c, this);
+          roleMiner.burry(c);
         }
         else if (Memory.creeps[c].role == 'prospector') {
           roleProspector.burry(c);
