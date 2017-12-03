@@ -30,7 +30,7 @@ module.exports = {
       }
       else {
         wall = Game.getObjectById(creep.memory.toRepair)
-        if (wall == undefined;) {
+        if (wall == undefined) {
           creep.memory.toRepair = undefined;
         }
         else {
