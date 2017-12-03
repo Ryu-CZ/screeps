@@ -303,8 +303,12 @@ module.exports = function() {
       sourceId
     )
     {
+      var body = [WORK, WORK, WORK, WORK, WORK, MOVE];
+      if ( 600 <= this.room.energyAvailable ) {
+        body.push(MOVE);
+      }
       name = this.createCreep(
-        [WORK, WORK, WORK, WORK, WORK, MOVE],
+        body,
         undefined,
         {
           role: 'miner',
