@@ -10,7 +10,7 @@ module.exports = {
     if (creep.memory.working) {
       // find closest spawn or extension which is not full
       var storage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-          filter: (s) => ( s.structureType == STRUCTURE_EXTENSION
+          filter: s => ( s.structureType == STRUCTURE_EXTENSION
                             || s.structureType == STRUCTURE_SPAWN
                             || s.structureType == STRUCTURE_TOWER
                           ) && s.energy < s.energyCapacity
@@ -34,8 +34,8 @@ module.exports = {
       // gather resources
       let container = creep.pos.findClosestByPath(
           FIND_STRUCTURES,
-          {filter: (s) => ( s.structureType == STRUCTURE_CONTAINER
-            && s.store[RESOURCE_ENERGY] > 12 // creature could do 1 step to other source because miner do 10/tick
+          {filter: s => ( s.structureType == STRUCTURE_CONTAINER
+            && s.store[RESOURCE_ENERGY] > 40 // search only for 50 source because miner do 10/tick
             && s.id != creep.room.memory.upgradeContainerId)}
           );
       if (container != undefined) {
@@ -45,7 +45,7 @@ module.exports = {
       }
       else if ( creep.memory.pickTick < 0 ) {
         var dropenergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
-                  filter: (d) => d.amount >= 62
+                  filter: d => d.amount >= 62
               });
         if (dropenergy == undefined) {
           creep.memory.pickTick = 9
