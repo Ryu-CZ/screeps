@@ -196,7 +196,9 @@ module.exports = function() {
     }
     let sources = this.room.find(FIND_SOURCES)
     for (let i in sources) {
-      this.room.memory.sources.push(sources[i].id);
+      if (this.room.memory.sources.indexOf(sources[i].id) === -1) {
+        this.room.memory.sources.push(sources[i].id);
+      }
       let containers = sources[i].pos.findInRange(
         FIND_STRUCTURES,
         1,
