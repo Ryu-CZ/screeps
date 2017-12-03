@@ -35,6 +35,9 @@ module.exports = function() {
     if (this.memory.carryEnergy == undefined) {
       this.memory.carryEnergy = 300;
     }
+    if (this.memory.commonerEnergyMax == undefined) {
+      this.memory.commonerEnergyMax = 1600;
+    }
     if (this.room.memory.sources == undefined) {
       // make tokens for each resource of room suitable for mining
       this.room.memory.sources = [];
@@ -220,6 +223,24 @@ module.exports = function() {
         energy,
         roleName)
       {
+      // build creep memory based on role
+      var mem = {
+        role: roleName,
+        working: false,
+        home: this.room.name
+      }
+      // adjust roles setting
+      if (roleName == 'repairer') {
+        mem.toRepair = undefined;
+        energy = _.min(energy, this.memory.commonerEnergyMax);
+      }
+      else if (roleName == 'waller') {
+        mem.toRepair = undefined;
+        energy = _.min(energy, this.memory.commonerEnergyMax);
+      }
+      else if (roleName == 'builder') {
+        energy = _.min(energy, this.memory.commonerEnergyMax);
+      }
       // create a balanced body as big as possible with the given energy
       var partsCnt = Math.floor(energy / 200);
       var body = [];
@@ -231,19 +252,6 @@ module.exports = function() {
       }
       for (let i = 0; i < partsCnt; i++) {
           body.push(MOVE);
-      }
-
-      // build creep memory based on role
-      var mem = {
-        role: roleName,
-        working: false,
-        home: this.room.name
-      }
-      if (roleName == 'repairer') {
-        mem.toRepair = undefined
-      }
-      else if (roleName == 'waller') {
-        mem.toRepair = undefined
       }
       // create creep with the created body and the given role
       return this.createCreep(body, undefined, mem);
