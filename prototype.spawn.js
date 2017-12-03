@@ -386,8 +386,7 @@ module.exports = function() {
   StructureSpawn.prototype.colonize = function(
       room,
       sourceIdx=0,
-      minProspectors=2,
-      minRaiders=0,
+      minProspectors=1,
       workParts=4
     )
     {
@@ -399,9 +398,7 @@ module.exports = function() {
       }
       this.memory.colonies[room][sourceIdx] = {
         minProspectors: minProspectors,
-        minRaiders: minRaiders,
         prospectors: 0,
-        raiders: 0,
         workParts: workParts};
       return "colony design - ok";
     }; // end colonize(..)
