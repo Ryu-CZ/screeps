@@ -96,7 +96,13 @@ module.exports = {
           creep.moveTo(source);
         }
         else if (code == ERR_NOT_ENOUGH_RESOURCES) {
-          creep.memory.working = (creep.energy < creep.energyCapacity * 0.63 && 114 < source.ticksToRegeneration);
+          if (creep.energy < creep.energyCapacity * 0.63 && 114 < source.ticksToRegeneration) {
+            creep.memory.working = true;
+          }
+          else {
+            // waiting to renew
+            creep.moveTo(source);
+          }
         }
       } // end if in target room
       else {
