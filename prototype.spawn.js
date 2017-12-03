@@ -232,14 +232,14 @@ module.exports = function() {
       // adjust roles setting
       if (roleName == 'repairer') {
         mem.toRepair = undefined;
-        energy = _.min(energy, this.memory.commonerEnergyMax);
+        energy = Math.min(energy, this.memory.commonerEnergyMax);
       }
       else if (roleName == 'waller') {
         mem.toRepair = undefined;
-        energy = _.min(energy, this.memory.commonerEnergyMax);
+        energy = Math.min(energy, this.memory.commonerEnergyMax);
       }
       else if (roleName == 'builder') {
-        energy = _.min(energy, this.memory.commonerEnergyMax);
+        energy = Math.min(energy, this.memory.commonerEnergyMax);
       }
       // create a balanced body as big as possible with the given energy
       var partsCnt = Math.floor(energy / 200);
