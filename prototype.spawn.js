@@ -80,10 +80,12 @@ module.exports = function() {
     // primal check if there is emergency in production line
     // emergency plan for rooms with storage
     if ((this.room.storage == undefined) && ( this.memory.counters['harvester'] == 0 && (this.memory.counters['miner'] == 0 || this.memory.counters['carry'] == 0))) {
+        console.log(this.name + " emergency 1")
         if (this.memory.counters['miner'] > 0) {
           name = this.createCarry(this.room.energyAvailable)
         }
         else {
+          console.log(this.name + " harvester emergency")
           name = this.createCustomCreep(
               this.room.energyAvailable,
               'harvester');
@@ -91,6 +93,7 @@ module.exports = function() {
     }
     // emergency plan for rooms without storage
     else if (0 == (this.memory.counters['harvester'] + this.memory.counters['carry'])) {
+      console.log(this.name + " emergency 2")
       if ( this.memory.counters['miner'] > 0 || this.room.storage[RESOURCE_ENERGY] >= 700) {
         name = this.createCarry(150);
       }
@@ -103,13 +106,15 @@ module.exports = function() {
     } // finished emergency check
     else {
       // first try create miner for free mining post
-      for (let c in this.room.memory.containers) {
-        if (this.room.memory.containers[c].isFree) {
-          name = this.createMiner(c, this.room.memory.containers[c].sourceId);
-          if (!(name < 0)) {
-            break;
+      if (this.room.memory.containers){
+          for (let c in this.room.memory.containers) {
+            if (this.room.memory.containers[c].isFree) {
+              name = this.createMiner(c, this.room.memory.containers[c].sourceId);
+              if (!(name < 0)) {
+                break;
+              }
+            }
           }
-        }
       }
       // common creeps
       if (name == undefined) {
@@ -138,7 +143,7 @@ module.exports = function() {
           }
         }
 
-        if (name == undefined)  {
+        if (name == undefined && this.room.memory.hostileCreeps == false)  {
           // try colonize other rooms as planed
           for (var room in this.memory.colonies) {
             for (var source in this.memory.colonies[room]){
@@ -148,7 +153,8 @@ module.exports = function() {
                   this.memory.colonies[room][source].workParts,
                   this.room.name,
                   room,
-                  source);
+                  this.memory.colonies[room][source].sourceId,
+                  sourceIdx=source);
                 if (!(name < 0)) {
                   this.memory.colonies[room][source].prospectors += 1;
                   break;
@@ -362,6 +368,7 @@ module.exports = function() {
       workPartsCnt,
       home,
       target,
+      sourceId,
       sourceIdx
     )
     {
@@ -383,9 +390,10 @@ module.exports = function() {
         working: false,
         home: home,
         target: target,
+        sourceId: sourceId,
         sourceIdx: sourceIdx,
         spawn: this.name,
-        toRepair:undefined
+        toRepair: undefined
       }
       // create creep with the designed body and the given role
       var name = this.createCreep(body, undefined, mem);
@@ -397,7 +405,8 @@ module.exports = function() {
       room,
       sourceIdx=0,
       minProspectors=1,
-      workParts=4
+      workParts=4,
+      prospectorsCnt=0
     )
     {
       if (this.memory.colonies == undefined) {
@@ -406,11 +415,27 @@ module.exports = function() {
       if ( this.memory.colonies[room] == undefined) {
         this.memory.colonies[room] = {};
       }
+      if ( this.memory.colonies[room].prospectors != undefined) {
+        prospectorsCnt = this.memory.colonies[room].prospectors;
+      }
       this.memory.colonies[room][sourceIdx] = {
         minProspectors: minProspectors,
-        prospectors: 0,
-        workParts: workParts};
+        prospectors: prospectorsCnt,
+        workParts: workParts,
+        sourceId: Game.rooms[room].find(FIND_SOURCES)[sourceIdx].id
+      };
       return "colony design - ok";
+    }; // end colonize(..)
+    
+  //update object ids
+  StructureSpawn.prototype.fixColonies = function()
+    {
+      for (var room in this.memory.colonies) {
+            for (var source in this.memory.colonies[room]){
+                this.memory.colonies[room][source].sourceId = Game.rooms[room].find(FIND_SOURCES)[source].id;
+            }
+      }
+      return this.name + " fixed colonies - ok";
     }; // end colonize(..)
 
   // Marks room to claim

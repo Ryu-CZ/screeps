@@ -6,20 +6,19 @@ module.exports = {
     if (check) {
       roleUtils.checkLoad(creep)
     }
-    // behavior
-    // //emergency evacuation
-    // if (creep.hits < creep.hitsMax) {
-    //   if (creep.room.name == creep.memory.home) {
-    //     creep.moveTo(creep.room.controller);
-    //     creep.memory.working = creep.carry.energy > 0;
-    //   }
-    //   else {
-    //     var door = creep.room.findExitTo(creep.memory.home);
-    //     creep.moveTo(creep.pos.findClosestByRange(door));
-    //   }
-    // }
-    // else
-    if (creep.memory.working) {
+    //emergency evacuation
+    if (creep.hits < creep.hitsMax) {
+      if (creep.room.name == creep.memory.home) {
+        creep.moveTo(creep.room.controller);
+        creep.memory.working = creep.carry.energy > 0;
+      }
+      else {
+        var door = creep.room.findExitTo(creep.memory.home);
+        creep.moveTo(creep.pos.findClosestByPath(door));
+      }
+    }
+    // carry energy
+    else if (creep.memory.working) {
       // room orientation first
       if (creep.room.name == creep.memory.home) { // I am home
         // find closest spawn or extension which is not full
@@ -67,8 +66,8 @@ module.exports = {
           }
           if (structure == undefined) { // nothing to repaire
             // move to home -> switch to traveling harvester
-            var door = creep.room.findExitTo(creep.memory.home)
-            creep.moveTo(creep.pos.findClosestByRange(door))
+            // var door = creep.room.findExitTo(creep.memory.home)
+            creep.moveTo(Game.spawns[creep.memory.spawn])
           }
           else { // repair structure
             creep.memory.toRepair = structure.id;
@@ -86,11 +85,12 @@ module.exports = {
 
       } // end foreign room
     } // end if creep is working
+    // gather energy
     else {
       // room orientation first
+      var source = Game.getObjectById(creep.memory.sourceId);
       if (creep.room.name == creep.memory.target) {
         // gather resources
-        var source = creep.room.find(FIND_SOURCES)[creep.memory.sourceIdx];
         var code = creep.harvest(source)
         if (code == ERR_NOT_IN_RANGE) {
           creep.moveTo(source);
@@ -106,8 +106,11 @@ module.exports = {
         }
       } // end if in target room
       else {
-        var door = creep.room.findExitTo(creep.memory.target)
-        creep.moveTo(creep.pos.findClosestByRange(door))
+        if (source == null) {
+            var door = creep.room.findExitTo(creep.memory.target)
+            source = creep.pos.findClosestByPath(door)
+        }
+        creep.moveTo(source)
       } // end not in target room
     } // end not working
   }, // end run function
