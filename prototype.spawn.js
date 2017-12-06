@@ -1,5 +1,6 @@
 var roleMiner = require('role.miner')
 var roleProspector = require('role.prospector')
+var roleReservant = require('role.reservant')
 
 var homeRoles = ['harvester', 'carry', 'claimer', 'repairer', 'upgrader', 'builder', 'waller'];
 var defaultMinCreeps = {
@@ -146,21 +147,33 @@ module.exports = function() {
         if (name == undefined && this.room.memory.hostileCreeps == false)  {
           // try colonize other rooms as planed
           for (var room in this.memory.colonies) {
-            for (var source in this.memory.colonies[room]){
-              if (this.memory.colonies[room][source].prospectors < this.memory.colonies[room][source].minProspectors) {
-                name = this.createProspector(
-                  energyCapacity,
-                  this.memory.colonies[room][source].workParts,
-                  this.room.name,
-                  room,
-                  this.memory.colonies[room][source].sourceId,
-                  sourceIdx=source);
-                if (!(name < 0)) {
-                  this.memory.colonies[room][source].prospectors += 1;
+            if (energyCapacity > 650 && this.memory.colonies[room].reserve && !(this.memory.colonies[room].reservant)) {
+              name = this.createReservant(
+                energyCapacity,
+                room)
+              if (!(name < 0)) {
+                  this.memory.colonies[room].reservant = name;
                   break;
-                }
-              } // if prospectors < minProspectors
-            } // loop souces
+                )
+              }
+            }
+            else {
+              for (var source in this.memory.colonies[room]){
+                if (this.memory.colonies[room][source].prospectors < this.memory.colonies[room][source].minProspectors) {
+                  name = this.createProspector(
+                    energyCapacity,
+                    this.memory.colonies[room][source].workParts,
+                    this.room.name,
+                    room,
+                    this.memory.colonies[room][source].sourceId,
+                    sourceIdx=source);
+                  if (!(name < 0)) {
+                    this.memory.colonies[room][source].prospectors += 1;
+                    break;
+                  }
+                } // if prospectors < minProspectors
+              } // loop souces
+            } // end else
           } // loop colonies
         } // end colonization try
         // default option to spawn
@@ -179,6 +192,9 @@ module.exports = function() {
         }
         else if (Memory.creeps[c].role == 'prospector') {
           roleProspector.burry(c);
+        }
+        else if (Memory.creeps[c].role == 'reservant') {
+          roleReservant.burry(c);
         }
         delete Memory.creeps[c];
         console.log("miner: " + this.memory.counters['miner']);
@@ -362,6 +378,31 @@ module.exports = function() {
     return this.createCreep(body, undefined, mem);
   }; // end createCarry()
 
+  // create a reservant
+  StructureSpawn.prototype.createReservant = function(
+      energy,
+      target
+    )
+    {
+    // create a carry body as big as possible with the given energy
+    var partsCnt = Math.floor(energy / 650);
+    var body = [];
+    for (let i = 0; i < partsCnt; i++) {
+        body.push(CLAIM);
+        body.push(MOVE);
+    }
+    // build creep memory based on role
+    var mem = {
+      role: 'reservant',
+      working: true,
+      target: target,
+      home: this.room.name,
+      spawn: this.name
+    }
+    // create creep with the created body and the given role
+    return  this.createCreep(body, undefined, mem);
+  }; // end createCarry()
+
   // create a long distance miner
   StructureSpawn.prototype.createProspector = function(
       energy,
@@ -438,9 +479,14 @@ module.exports = function() {
   StructureSpawn.prototype.fixColonies = function()
     {
       for (var room in this.memory.colonies) {
-            for (var source in this.memory.colonies[room]){
-                this.memory.colonies[room][source].sourceId = Game.rooms[room].find(FIND_SOURCES)[source].id;
-            }
+        for (var source in this.memory.colonies[room]){
+          if (Game.rooms[room]) {
+            this.memory.colonies[room][source].sourceId = Game.rooms[room].find(FIND_SOURCES)[source].id;
+          }
+          else {
+            this.memory.colonies[room][source].sourceId = null;
+          }
+        }
       }
       return this.name + " fixed colonies - ok";
     }; // end colonize(..)

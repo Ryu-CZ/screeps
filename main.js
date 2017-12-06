@@ -10,6 +10,7 @@ var roleRaider = require('role.raider')
 var roleClaimer = require('role.claimer')
 var roleMiner = require('role.miner')
 var roleCarry = require('role.carry')
+var roleReservant = require('role.reservant')
 var controllDefence = require('controll.defence')
 
 module.exports.loop = function() {
@@ -42,6 +43,9 @@ module.exports.loop = function() {
     }
     else if (creep.memory.role == 'waller') {
       roleWaller.run(creep, true);
+    }
+    else if (creep.memory.role == 'reservant') {
+      roleReservant.run(creep, true);
     }
     else if (creep.memory.role == 'harvester') {
       roleHarvester.run(creep, true);
