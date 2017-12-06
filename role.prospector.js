@@ -91,6 +91,11 @@ module.exports = {
       var source = Game.getObjectById(creep.memory.sourceId);
       if (creep.room.name == creep.memory.target) {
         // gather resources
+        if (creep.memory.sourceId == null) {
+          // first visit of my clan in this room, memorize sourceId
+          creep.memory.sourceId == creep.room.find(FIND_SOURCES)[sourceIdx].id
+          Game.spawns[creep.memory.spawn].memory.colonies[creep.room.name][creep.memory.sourceIdx].sourceId = creep.memory.sourceId
+        }
         var code = creep.harvest(source)
         if (code == ERR_NOT_IN_RANGE) {
           creep.moveTo(source);

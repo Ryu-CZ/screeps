@@ -409,6 +409,7 @@ module.exports = function() {
       prospectorsCnt=0
     )
     {
+      var srcId = null;
       if (this.memory.colonies == undefined) {
         this.memory.colonies = {};
       }
@@ -418,15 +419,21 @@ module.exports = function() {
       if ( this.memory.colonies[room].prospectors != undefined) {
         prospectorsCnt = this.memory.colonies[room].prospectors;
       }
+      if ( this.memory.colonies[room].sourceId != undefined ) {
+        srcId = this.memory.colonies[room].sourceId;
+      }
+      else if (Game.rooms[room]) {
+        srcId = Game.rooms[room].find(FIND_SOURCES)[sourceIdx].id
+      }
       this.memory.colonies[room][sourceIdx] = {
         minProspectors: minProspectors,
         prospectors: prospectorsCnt,
         workParts: workParts,
-        sourceId: Game.rooms[room].find(FIND_SOURCES)[sourceIdx].id
+        sourceId: srcId
       };
       return "colony design - ok";
     }; // end colonize(..)
-    
+
   //update object ids
   StructureSpawn.prototype.fixColonies = function()
     {
