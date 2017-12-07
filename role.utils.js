@@ -18,14 +18,17 @@ module.exports = {
     // gather resources
     let container = creep.pos.findClosestByPath(
       FIND_STRUCTURES,
-      {filter: (s) => 
+      {filter: s =>
         ( s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE)
         && s.store[RESOURCE_ENERGY] > noticeCapacity}
       );
     if (container != undefined) {
-      creep.memory.pickTick = 7;
       if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         creep.moveTo(container);
+        creep.memory.pickTick -= 1;
+      }
+      else {
+        creep.memory.pickTick = 5;
       }
     }
     else if ( creep.memory.pickTick < 0 ) {
@@ -33,7 +36,7 @@ module.exports = {
                 filter: (d) => d.amount >= 62
             });
       if (dropenergy == undefined) {
-        creep.memory.pickTick = 9
+        creep.memory.pickTick = 42
       }
       else { // pick up fropped energy
         if (creep.pickup(dropenergy) == ERR_NOT_IN_RANGE) {

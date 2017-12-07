@@ -40,18 +40,23 @@ module.exports = {
           );
       if (container != undefined) {
         if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.memory.pickTick -= 1
           creep.moveTo(container);
         }
+        else {
+          creep.memory.pickTick = 5;
+        }
       }
-      else if ( creep.memory.pickTick < 0 ) {
+      else if ( creep.memory.pickTick <= 0) {
         var dropenergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                   filter: d => d.amount >= 62
               });
         if (dropenergy == undefined) {
-          creep.memory.pickTick = 9
+          creep.memory.pickTick = 33
         }
         else {
           if (creep.pickup(dropenergy) == ERR_NOT_IN_RANGE) {
+            creep.memory.pickTick = 0
             creep.moveTo(dropenergy)
           }
         }

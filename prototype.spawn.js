@@ -248,7 +248,8 @@ module.exports = function() {
       var mem = {
         role: roleName,
         working: false,
-        home: this.room.name
+        home: this.room.name,
+        pickTick: 0
       }
       // adjust roles setting
       if (roleName == 'repairer') {
@@ -371,7 +372,8 @@ module.exports = function() {
     var mem = {
       role: 'carry',
       working: false,
-      home:this.room.name
+      home:this.room.name,
+      pickTick: 0
     }
     // create creep with the created body and the given role
     return this.createCreep(body, undefined, mem);
