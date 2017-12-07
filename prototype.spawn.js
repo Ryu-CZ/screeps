@@ -154,12 +154,11 @@ module.exports = function() {
               if (!(name < 0)) {
                   this.memory.colonies[room].reservant = name;
                   break;
-                )
               }
             }
             else {
               for (var source in this.memory.colonies[room]){
-                if (this.memory.colonies[room][source].prospectors < this.memory.colonies[room][source].minProspectors) {
+                if (source != 'reserve' && source != 'reservant' && this.memory.colonies[room][source].prospectors < this.memory.colonies[room][source].minProspectors) {
                   name = this.createProspector(
                     energyCapacity,
                     this.memory.colonies[room][source].workParts,
