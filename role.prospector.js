@@ -101,6 +101,9 @@ module.exports = {
           creep.moveTo(source);
         }
         else if (code == ERR_NOT_ENOUGH_RESOURCES) {
+          if (Game.spawns[creep.memory.spawn].memory.colonies[creep.room.name].allowReservation && ( creep.room.controller.reservation == undefined || 1140 > creep.room.controller.reservation.ticksToEnd )){
+            Game.spawns[creep.memory.spawn].memory.colonies[creep.room.name].reserve = true;
+          }
           if (creep.energy >= (0.62 * creep.energyCapacity) && (114 < source.ticksToRegeneration)) {
             creep.memory.working = true;
           }
