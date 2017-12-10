@@ -61,7 +61,7 @@ module.exports = {
           if (structure == undefined) {
             structure = creep.pos.findClosestByPath(
               FIND_STRUCTURES,
-              {filter: (s) => s.hits < 0.62*s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART}
+              {filter: (s) => s.structureType == STRUCTURE_ROAD && s.hits < 0.62*s.hitsMax}
             );
           }
           if (structure == undefined) { // nothing to repaire
