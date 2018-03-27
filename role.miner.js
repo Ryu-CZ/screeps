@@ -7,7 +7,7 @@ module.exports = {
     }
     else{
       var container = Game.getObjectById(creep.memory.containerId);
-      if (creep.pos.isEqualTo(container.pos)) {
+      if (container && creep.pos.isEqualTo(container.pos)) {
         creep.harvest(source);
         creep.memory.landed = true;
       }
