@@ -3,6 +3,9 @@ var roleUtils = require('role.utils')
 
 module.exports = {
   run : function(creep, check) {
+    if (creep.memory.enemy_live) {
+        creep.memory.enemy_live -= 1
+    }
     if (check) {
       roleUtils.checkLoad(creep)
     }
