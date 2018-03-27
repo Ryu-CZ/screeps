@@ -93,7 +93,7 @@ module.exports = function() {
         }
     }
     // emergency plan for rooms without storage
-    else if (0 == (this.memory.counters['harvester'] + this.memory.counters['carry'])) {
+    else if ((0 == (this.memory.counters['harvester'] + this.memory.counters['carry'])) || (0 == (this.memory.counters['harvester'] + this.memory.counters['miner']))) {
       console.log(this.name + " emergency 2")
       if ( this.memory.counters['miner'] > 0 || this.room.storage[RESOURCE_ENERGY] >= 700) {
         name = this.createCarry(150);
@@ -111,14 +111,14 @@ module.exports = function() {
           for (let c in this.room.memory.containers) {
             if (this.room.memory.containers[c].isFree) {
               name = this.createMiner(c, this.room.memory.containers[c].sourceId);
-              if (!(name < 0)) {
+              if (_.isString(name)) {
                 break;
               }
             }
           }
       }
       // common creeps
-      if (name == undefined) {
+      if (!_.isString(name)) {
         // try create creeps for home maintainence
         for (let role of homeRoles) {
           // check for claim order
@@ -144,7 +144,7 @@ module.exports = function() {
           }
         }
 
-        if (name == undefined && this.room.memory.hostileCreeps == false)  {
+        if (!_.isString(name) && this.room.memory.hostileCreeps == false)  {
           // try colonize other rooms as planed
           for (var room in this.memory.colonies) {
             if (energyCapacity > 650 && this.memory.colonies[room].reserve && !(this.memory.colonies[room].reservant)) {
@@ -176,7 +176,7 @@ module.exports = function() {
           } // loop colonies
         } // end colonization try
         // default option to spawn
-        if (name == undefined && this.memory.counters['builder'] < this.memory.maxBuilders) {
+        if (!_.isString(name) && this.memory.counters['builder'] < this.memory.maxBuilders) {
           // try default creep : builder
           name = this.createCustomCreep(energyCapacity, 'builder');
         } // default option to spawn
