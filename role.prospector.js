@@ -7,12 +7,16 @@ module.exports = {
       roleUtils.checkLoad(creep)
     }
     //emergency evacuation
-    if (creep.hits < creep.hitsMax) {
+    if (creep.memory.enemy_live || ( creep.hits < creep.hitsMax)) {
       if (creep.room.name == creep.memory.home) {
         creep.moveTo(creep.room.controller);
         creep.memory.working = creep.carry.energy > 0;
       }
       else {
+        var enemy = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (enemy != undefined) {
+            creep.memory.enemy_live = enemy.ticksToLive
+        }
         var door = creep.room.findExitTo(creep.memory.home);
         creep.moveTo(creep.pos.findClosestByPath(door));
       }
@@ -125,7 +129,12 @@ module.exports = {
   // clean remains of creep
   burry : function(name) {
     // update my spawn prospector statistics
-    Memory.spawns[Memory.creeps[name].spawn].colonies[Memory.creeps[name].target][Memory.creeps[name].sourceIdx].prospectors -= 1
+    try{
+      Memory.spawns[Memory.creeps[name].spawn].colonies[Memory.creeps[name].target][Memory.creeps[name].sourceIdx].prospectors -= 1
+    }
+    catch(err) {
+      console.log('warn: cannot remvoe prospector')
+    }
     //clean memory left over
     delete Memory.creeps[name];
   }
